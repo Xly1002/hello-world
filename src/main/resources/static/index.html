@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        button {
+            padding: 8px 16px;
+            margin: 5px;
+            cursor: pointer;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            min-height: 50px;
+        }
+    </style>
+</head>
+<body>
+    <form action="/get" method="get">
+        <button type="submit" onclick="getStringData()">获取字符串数据</button>
+    </form>
+
+
+
+    <div id="resultDiv">点击按钮获取数据...</div>
+
+     <script>
+         function getStringData() {
+             const resultDiv = document.getElementById('resultDiv');
+
+             // 退出成功后访问/get（会触发登录）
+             const url = "http://localhost:8080/get";
+
+             // 使用XHR发送请求
+             const xhr = new XMLHttpRequest();
+             xhr.open('GET', url, true);
+
+             xhr.onload = function() {
+                 if (xhr.status === 200) {
+                     resultDiv.textContent = xhr.responseText;
+                     resultDiv.className = "";
+                 } else if (xhr.status === 302) {
+                     // 302重定向说明需要登录，让浏览器跳转至登录页
+                     window.location.href = url;
+                 } else {
+                     resultDiv.textContent = `请求失败，状态码: ${xhr.status}`;
+                     resultDiv.className = "error";
+                 }
+             };
+
+             xhr.onerror = function() {
+                 resultDiv.textContent = "网络错误，无法连接到服务器";
+                 resultDiv.className = "error";
+             };
+
+             xhr.send();
+         }
+
+
+    </script>
+</body>
+</html>
